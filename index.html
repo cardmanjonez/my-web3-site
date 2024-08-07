@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web3 Site</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+</head>
+<body>
+    <h1>Welcome to My Web3 Site</h1>
+    <button id="connectWallet">Connect Wallet</button>
+    <script>
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            if (window.ethereum) {
+                const web3 = new Web3(window.ethereum);
+                try {
+                    await window.ethereum.enable(); // Request account access
+                    const accounts = await web3.eth.getAccounts();
+                    alert('Connected account: ' + accounts[0]);
+                } catch (error) {
+                    alert('User denied account access');
+                }
+            } else {
+                alert('MetaMask is not installed');
+            }
+        });
+    </script>
+</body>
+</html>
