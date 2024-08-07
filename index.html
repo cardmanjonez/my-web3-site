@@ -3,26 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Web3 Site</title>
+    <title>My Web3 Game</title>
     <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .asset-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .asset-list li {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to My Web3 Site</h1>
+    <h1>Welcome to My Web3 Game</h1>
     <button id="connectWallet">Connect Wallet</button>
+    
+    <div id="game" class="hidden">
+        <h2>Select Your Assets</h2>
+        <ul id="assetList" class="asset-list"></ul>
+        <button id="calculateScore">Calculate Score</button>
+    </div>
+
+    <div id="scoreSection" class="hidden">
+        <h2>Your Score: <span id="score"></span></h2>
+        <button id="playAgain">Play Again</button>
+    </div>
+
+    <h2>Past Scores</h2>
+    <ul id="pastScores" class="asset-list"></ul>
+
     <script>
-        document.getElementById('connectWallet').addEventListener('click', async () => {
+        const connectButton = document.getElementById('connectWallet');
+        const gameSection = document.getElementById('game');
+        const assetList = document.getElementById('assetList');
+        const calculateScoreButton = document.getElementById('calculateScore');
+        const scoreSection = document.getElementById('scoreSection');
+        const scoreElement = document.getElementById('score');
+        const playAgainButton = document.getElementById('playAgain');
+        const pastScores = document.getElementById('pastScores');
+
+        let selectedAssets = [];
+
+        connectButton.addEventListener('click', async () => {
             if (window.ethereum) {
                 const web3 = new Web3(window.ethereum);
                 try {
-                    await window.ethereum.enable(); // Request account access
+                    await window.ethereum.enable();
                     const accounts = await web3.eth.getAccounts();
                     alert('Connected account: ' + accounts[0]);
+
+                    // Fetch assets (for simplicity, we'll simulate this)
+                    const assets = ['Asset 1', 'Asset 2', 'Asset 3', 'Asset 4', 'Asset 5'];
+                    assetList.innerHTML = '';
+                    assets.forEach(asset => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<label><input type="checkbox" value="${asset}"> ${asset}</label>`;
+                        assetList.appendChild(li);
+                    });
+
+                    connectButton.classList.add('hidden');
+                    gameSection.classList.remove('hidden');
                 } catch (error) {
                     alert('User denied account access');
                 }
             } else {
                 alert('MetaMask is not installed');
             }
+        });
+
+        calculateScoreButton.addEventListener('click', () => {
+            const checkboxes = assetList.querySelectorAll('input[type="checkbox"]');
+            selectedAssets = [];
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedAssets.push(checkbox.value);
+                }
+            });
+
+            if (selectedAssets.length === 0) {
+                alert('Please select at least one asset.');
+                return;
+            }
+
+            // Calculate score (for simplicity, we'll simulate this)
+            const score = Math.floor(Math.random() * 101);
+            scoreElement.textContent = score;
+
+            const li = document.createElement('li');
+            li.textContent = `Score: ${score} - Assets: ${selectedAssets.join(', ')}`;
+            pastScores.appendChild(li);
+
+            gameSection.classList.add('hidden');
+            scoreSection.classList.remove('hidden');
+        });
+
+        playAgainButton.addEventListener('click', () => {
+            const checkboxes = assetList.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            scoreSection.classList.add('hidden');
+            gameSection.classList.remove('hidden');
         });
     </script>
 </body>
